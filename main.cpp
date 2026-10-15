@@ -9,71 +9,42 @@ private:
     int balance;
 
 public:
-    BankAccount()
-    {
-        accountNumber = 0;
-        accountHolderName = "";
-        balance = 0;
-    }
-    BankAccount(int accno, string name, int bal)
-    {
-        int accountNumber = accno;
-        string accountHolderName = name;
-        double balance = bal;
-    }
-    ~BankAccount()
-    {
-    }
-
-    void set_accountNumber(int accno)
+    BankAccount(int accno, string name, double bal)
     {
         accountNumber = accno;
-    }
-    void set_accountHolderName(string name)
-    {
         accountHolderName = name;
-    }
-    void set_balance(double bal)
-    {
         balance = bal;
     }
-    int get_accountNumber()
-    {
-        return accountNumber;
-    }
-    string get_accountHolderName()
-    {
-        return accountHolderName;
-    }
-    int get_balance()
+    double get_balance()
     {
         return balance;
     }
-    void desposit(double bal)
+   virtual void deposit(double amount)
     {
-        balance = balance + bal;
+        balance = balance + amount;
     }
-    void withdraw(double amount)
+    virtual void withdraw(double amount)
     {
-        if (amount < balance)
+        if (amount >balance)
         {
-            cout << "Withdrawal successful!" << endl;
+            cout << "Insufficient withdraw" << endl;
         }
         else
         {
-            cout << "Insufficient balance" << endl;
+            balance=balance-amount;
         }
     }
-    virtual double calculatorInterest()
-    {
-        return 0;
-    }
+   
     void displayAccountInfo()
     {
         cout << "---Account Info---" << endl;
         cout << "Account No: " << endl;
         cout << "Holder Name : " << endl;
         cout << "Balance : " << endl;
+    }
+    virtual void calculateInterest()
+    {
+   
     }
 };
 class SavingsAccount : public BankAccount
@@ -82,31 +53,28 @@ private:
     int interestRate;
 
 public:
-    SavingsAccount() : BankAccount()
-    {
-        interestRate = 0;
-    }
-    SavingsAccount(int accno, string name, int bal, int rate) : BankAccount(accno, name, bal)
+    
+    SavingsAccount(int accno, string name, double bal, int rate) : BankAccount(accno, name, bal)
     {
         interestRate = rate;
     }
-    void set_interestRate(int rate)
-    {
-        interestRate = rate;
-    }
-    int get_interestRate()
-    {
-        return interestRate;
-    }
-    void calculateInterest(double amount)
+    
+    void calculateInterest()override
     {
         cout << get_balance() * interestRate / 100 << endl;
     }
-    void displayAccountInfo()
+    void deposit(double amount)override
     {
-        BankAccount::displayAccountInfo();
-        cout << "Interest Rate : " << endl;
+        cout<<"Saving Account Deposit"<<endl;
+        BankAccount::deposit(amount);
+
     }
+    void withdraw(double amount)override{
+        cout<<"Saving Account Withdraw"<<endl;
+        BankAccount::withdraw(amount);
+    }
+
+   
 };
 class CheckingAccount : public BankAccount
 {
@@ -114,37 +82,19 @@ private:
     double overdraftLimit;
 
 public:
-    CheckingAccount() : BankAccount()
-    {
-        overdraftLimit = 0;
-    }
+   
     CheckingAccount(int accno, string name, double bal, double limit) : BankAccount(accno, name, bal)
     {
         overdraftLimit = limit;
     }
-    void set_overdraftLimit(double limit)
-    {
-        overdraftLimit = limit;
-    }
-    int get_overdraftLimit()
-    {
-        return overdraftLimit;
-    }
+    
     void checkOverdraft(double amount)
     {
-        if (get_balance() < amount)
+        if (amount>get_balance()+overdraftLimit)
         {
-            cout << "overdraft exceeds";
+            cout << "Account Overdraft Exceeded"<<endl;
         }
-        else
-        {
-            cout << "overdraft not exceed";
-        }
-    }
-    void displayAccountInfo()
-    {
-        BankAccount::displayAccountInfo();
-        cout << "Overdraft Limit : " << endl;
+        
     }
 };
 class FixedDepositAccount : public BankAccount
@@ -153,58 +103,117 @@ private:
     int term;
 
 public:
-    FixedDepositAccount() : BankAccount()
-    {
-        term = 0;
-    }
+  
     FixedDepositAccount(int accno, string name, int bal, int t) : BankAccount(accno, name, bal)
     {
         term = t;
     }
-    void set_term(int t)
+
+    void calculateInterest() override
     {
-        term = t;
+     
+        cout << get_balance() * term * 12 / 1200 << endl;
     }
-    int get_term()
+    void deposit(double amount) override
     {
-        return term;
+        cout << "FixedDeposit Account Deposit" << endl;
+        BankAccount::deposit(amount);
     }
-    void calculateInterest()
+    void withdraw(double amount) override
     {
-        int rate;
-        cout << get_balance() * rate * term / 100 << endl;
-    }
-    void displayAccountInfo()
-    {
-        BankAccount::displayAccountInfo();
-        cout << "Term : " << endl;
+        cout << "FixedDeposit Account Withdraw" << endl;
+        BankAccount::withdraw(amount);
     }
 };
 int main()
 {
     int choice;
+    SavingsAccount savings(101, "Supriya", 2000, 10);
+    CheckingAccount checking(102, "Rashi", 2000, 1000);
+    FixedDepositAccount fixeddeposit(103, "Pragya", 4000, 2);
+
     do
     {
+        
         cout << "1. Savings Account" << endl;
         cout << "2. Checking Account" << endl;
-        cout << "3. Fixed Deposit Account" << endl;
-        cout << "4. Exit" << endl;
-        cout << "Enter your choice : " << endl;
+        cout << "3. FixedDeposit Account" << endl;
+        cout<<"0. Exit"<<endl;
+
+        cout << "Enter your choice : " ;
         cin >> choice;
 
         if (choice == 1)
         {
-        int accno;string name;double bal;int rate;
-        cout<<"Account name : "<<endl;
+            cout<<"1. Deposit"<<endl;
+            cout<<"2. Withdraw"<<endl;
+            cout<<"3. Interest Rate"<<endl;
+           
+            int choice;
+            cout<<"Enter your choice : ";
+            cin>>choice;
 
+            if(choice==1){
+                double money;
+                cout<<"Enter your money: ";
+                cin>>money;
+                savings.deposit(money);
+            }
+            else if(choice==2){
+                double money;
+                cout<<"Enter your money: ";
+                cin>>money;
+                savings.withdraw(money);
+            }
+            else if(choice==3){
+                savings.calculateInterest();
+            }
+         
         }
-        else if(choice==2){
+        else if (choice == 2)
+        {
+            double amount;
+            cout<<"Enter your amount: ";
+            cin>>amount;
 
+            checking.checkOverdraft(amount);
         }
-        else if(choice==3){
+        else if (choice == 3)
+        {
+            cout<<"1. Deposit"<<endl;
+            cout<<"2. withdraw"<<endl;
+            cout<<"3. Interest Rate"<<endl;
+
+            int choice;
+            cout<<"Enter your choice : ";
+            cin>>choice;
+            if(choice==1){
+                double money;
+                cout<<"Enter your money: ";
+                cin >> money;
+                fixeddeposit.deposit(money);
+            }
+            else if (choice == 2)
+            {
+                double money;
+                cout << "Enter your money: " ;
+                cin>>money;
+                fixeddeposit.withdraw(money);
+            }
+            else if (choice == 3)
+            {
+                fixeddeposit.calculateInterest();
+            }
             
         }
+        else if(choice==0){
+            cout<<"Exit"<<endl;
+        }
+        else{
+            cout<<"Invalid input"<<endl;
+        }
 
-    } while (choice != 4);
+
+    } while (choice != 0);
     return 0;
 }
