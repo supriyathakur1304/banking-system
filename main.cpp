@@ -6,7 +6,7 @@ class BankAccount
 private:
     int accountNumber;
     string accountHolderName;
-    int balance;
+    double balance;
 
 public:
     BankAccount(int accno, string name, double bal)
@@ -19,32 +19,45 @@ public:
     {
         return balance;
     }
-   virtual void deposit(double amount)
+    virtual void deposit(double amount)
     {
-        balance = balance + amount;
-    }
-    virtual void withdraw(double amount)
-    {
-        if (amount >balance)
+        if (amount <= 0)
         {
-            cout << "Insufficient withdraw" << endl;
+            cout << "Invalid deposit amount" << endl;
         }
         else
         {
-            balance=balance-amount;
+            balance = balance + amount;
+            cout << "Deposit successful" << endl;
         }
     }
-   
+    virtual void withdraw(double amount)
+    {
+        if (amount <= 0)
+        {
+            cout << "Invalid withdrawal amount" << endl;
+        }
+        else if (amount > balance)
+        {
+            cout << "Insufficient withdrawal" << endl;
+        }
+        else
+        {
+            balance = balance - amount;
+            cout << "Withdrawal successful" << endl;
+        }
+    }
+
     void displayAccountInfo()
     {
         cout << "---Account Info---" << endl;
-        cout << "Account No: " << endl;
-        cout << "Holder Name : " << endl;
-        cout << "Balance : " << endl;
+        cout << "Account No: " << accountNumber << endl;
+        cout << "Holder Name : " << accountHolderName << endl;
+        cout << "Balance : " << balance << endl;
     }
     virtual void calculateInterest()
     {
-   
+        cout << "Calaculateinterest" << endl;
     }
 };
 class SavingsAccount : public BankAccount
@@ -53,28 +66,25 @@ private:
     int interestRate;
 
 public:
-    
     SavingsAccount(int accno, string name, double bal, int rate) : BankAccount(accno, name, bal)
     {
         interestRate = rate;
     }
-    
-    void calculateInterest()override
-    {
-        cout << get_balance() * interestRate / 100 << endl;
-    }
-    void deposit(double amount)override
-    {
-        cout<<"Saving Account Deposit"<<endl;
-        BankAccount::deposit(amount);
 
+    void calculateInterest() override
+    {
+        cout << "Savings Interest: " << get_balance() * interestRate / 100 << endl;
     }
-    void withdraw(double amount)override{
-        cout<<"Saving Account Withdraw"<<endl;
+    void deposit(double amount) override
+    {
+        cout << "Saving Account Deposit" << endl;
+        BankAccount::deposit(amount);
+    }
+    void withdraw(double amount) override
+    {
+        cout << "Saving Account Withdraw" << endl;
         BankAccount::withdraw(amount);
     }
-
-   
 };
 class CheckingAccount : public BankAccount
 {
@@ -82,19 +92,17 @@ private:
     double overdraftLimit;
 
 public:
-   
     CheckingAccount(int accno, string name, double bal, double limit) : BankAccount(accno, name, bal)
     {
         overdraftLimit = limit;
     }
-    
+
     void checkOverdraft(double amount)
     {
-        if (amount>get_balance()+overdraftLimit)
+        if (amount > get_balance() + overdraftLimit)
         {
-            cout << "Account Overdraft Exceeded"<<endl;
+            cout << "Account Overdraft Exceeded" << endl;
         }
-        
     }
 };
 class FixedDepositAccount : public BankAccount
@@ -103,7 +111,6 @@ private:
     int term;
 
 public:
-  
     FixedDepositAccount(int accno, string name, int bal, int t) : BankAccount(accno, name, bal)
     {
         term = t;
@@ -111,8 +118,8 @@ public:
 
     void calculateInterest() override
     {
-     
-        cout << get_balance() * term * 12 / 1200 << endl;
+
+        cout << "Fixed Deposit Interest: " << get_balance() * term * 12 / 1200 << endl;
     }
     void deposit(double amount) override
     {
@@ -134,85 +141,88 @@ int main()
 
     do
     {
-        
+
         cout << "1. Savings Account" << endl;
         cout << "2. Checking Account" << endl;
         cout << "3. FixedDeposit Account" << endl;
-        cout<<"0. Exit"<<endl;
+        cout << "0. Exit" << endl;
 
-        cout << "Enter your choice : " ;
+        cout << "Enter your choice : ";
         cin >> choice;
 
         if (choice == 1)
         {
-            cout<<"1. Deposit"<<endl;
-            cout<<"2. Withdraw"<<endl;
-            cout<<"3. Interest Rate"<<endl;
-           
-            int choice;
-            cout<<"Enter your choice : ";
-            cin>>choice;
+            cout << "1. Deposit" << endl;
+            cout << "2. Withdraw" << endl;
+            cout << "3. Interest Rate" << endl;
 
-            if(choice==1){
+            int choice;
+            cout << "Enter your choice : ";
+            cin >> choice;
+
+            if (choice == 1)
+            {
                 double money;
-                cout<<"Enter your money: ";
-                cin>>money;
+                cout << "Enter your money: ";
+                cin >> money;
                 savings.deposit(money);
             }
-            else if(choice==2){
+            else if (choice == 2)
+            {
                 double money;
-                cout<<"Enter your money: ";
-                cin>>money;
+                cout << "Enter your money: ";
+                cin >> money;
                 savings.withdraw(money);
             }
-            else if(choice==3){
+            else if (choice == 3)
+            {
                 savings.calculateInterest();
             }
-         
         }
         else if (choice == 2)
         {
             double amount;
-            cout<<"Enter your amount: ";
-            cin>>amount;
+            cout << "Enter your amount: ";
+            cin >> amount;
 
             checking.checkOverdraft(amount);
         }
         else if (choice == 3)
         {
-            cout<<"1. Deposit"<<endl;
-            cout<<"2. withdraw"<<endl;
-            cout<<"3. Interest Rate"<<endl;
+            cout << "1. Deposit" << endl;
+            cout << "2. withdraw" << endl;
+            cout << "3. Interest Rate" << endl;
 
             int choice;
-            cout<<"Enter your choice : ";
-            cin>>choice;
-            if(choice==1){
+            cout << "Enter your choice : ";
+            cin >> choice;
+            if (choice == 1)
+            {
                 double money;
-                cout<<"Enter your money: ";
+                cout << "Enter your money: ";
                 cin >> money;
                 fixeddeposit.deposit(money);
             }
             else if (choice == 2)
             {
                 double money;
-                cout << "Enter your money: " ;
-                cin>>money;
+                cout << "Enter your money: ";
+                cin >> money;
                 fixeddeposit.withdraw(money);
             }
             else if (choice == 3)
             {
                 fixeddeposit.calculateInterest();
             }
-            
         }
-        else if(choice==0){
-            cout<<"Exit"<<endl;
+        else if (choice == 0)
+        {
+            cout << "Exit" << endl;
         }
-        else{
-            cout<<"Invalid input"<<endl;
+        else
+        {
+            cout << "Invalid input" << endl;
         }
-
 
     } while (choice != 0);
     return 0;
